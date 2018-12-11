@@ -106,8 +106,8 @@ var coin = {
         ctx.stroke();
     },
     randomisePosition(){
-        this.x = getRandomArbitrary(100, c.width-100);
-        this.y = getRandomArbitrary(100, c.height-100);
+        this.x = getRandomArbitrary(200, c.width-200);
+        this.y = getRandomArbitrary(200, c.height-200);
     }
 }
 
