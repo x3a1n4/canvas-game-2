@@ -318,7 +318,7 @@ function draw(){
         }
     }
 
-    if(loops % 400 == 0){
+    if(loops % 4000 == 0){
         if(difficulty<4){
             difficulty++;
         }
