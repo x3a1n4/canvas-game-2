@@ -9,6 +9,8 @@ var startTime = new Date().getTime();
 var newEnemyTime = 50;
 var difficulty = 0;
 var keys=[0,0,0,0];
+var highscore = 0;
+var highTime = 0;
 
 var enemies=[];
 document.onkeypress = keyPressed;
@@ -121,6 +123,7 @@ function Enemy() {
     this.lineWidth = 2;
     this.radius = 10;
     this.direction = 0;
+    this.time = 0;
     this.drawEnemy= function(){
         
         ctx.fillStyle=this.colour;
@@ -214,6 +217,17 @@ function draw(){
             case 3:
                 enemies[i].y -= enemies[i].speed;
                 break;
+            case 4:
+                var xToPlayer = enemies[i].x - player.x;
+                var yToPlayer = enemies[i].y - player.y;
+                var divisor = 1 / distanceBetween(enemies[i].x, enemies[i].y, player.x, player.y);
+                enemies[i].x -= xToPlayer * divisor;
+                enemies[i].y -= yToPlayer * divisor;
+                enemies[i].time ++;
+                if(enemies[i].time > 3000){
+                    enemies.splice(i, 1);
+                }
+                break;
             default:
                 break;
         }
@@ -224,6 +238,12 @@ function draw(){
             closest=distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y);
         }
         if(distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y) < player.size/2 + enemies[i].radius){
+            if(timePassed > highTime){
+                highTime = timePassed;
+            }
+            if(score > highscore){
+                highscore = score;
+            }
             startTime = new Date().getTime();
             player.x = player.startx;
             player.y = player.starty;
@@ -243,10 +263,10 @@ function draw(){
         }
     }
 
+    //create enemies
     if(loops % newEnemyTime == 0){
         var newEnemy = new Enemy();
         var newDirection = getRandomInt(0, difficulty);
-        console.log(newDirection);
         switch(newDirection){
             case 0:
                 newEnemy.y = getRandomArbitrary(0, c.height);
@@ -255,7 +275,6 @@ function draw(){
             case 1:
                 newEnemy.y = getRandomArbitrary(0, c.height);
                 newEnemy.x = c.width;
-                console.log(1);
                 break;
             case 2:
                 newEnemy.x = getRandomArbitrary(0, c.width);
@@ -265,6 +284,26 @@ function draw(){
                 newEnemy.x = getRandomArbitrary(0, c.width);
                 newEnemy.y = c.height;
                 break;
+            case 4:
+                switch(getRandomInt(0,3)){
+                    case 0:
+                        newEnemy.x = 0;
+                        newEnemy.y = 0;
+                        break;
+                    case 1:
+                        newEnemy.x = c.width;
+                        newEnemy.y = 0;
+                        break;
+                    case 2:
+                        newEnemy.x = 0;
+                        newEnemy.y = c.height;
+                        break;
+                    case 3:
+                        newEnemy.x = c.width;
+                        newEnemy.y = c.height;
+                        break;
+                }
+                newEnemy.colour="#a341f4";
             default:
                 break;
         }
@@ -272,13 +311,15 @@ function draw(){
         newEnemy.speed = getRandomArbitrary(timePassed/100000+1, timePassed/100000 + 1.5);
         enemies.push(newEnemy);
     }
+
     if(loops % 500 == 0){
         if(newEnemyTime>5){
             newEnemyTime--;
         }
     }
-    if(loops % 4000 == 0){
-        if(difficulty<3){
+
+    if(loops % 400 == 0){
+        if(difficulty<4){
             difficulty++;
         }
     }
@@ -287,7 +328,8 @@ function draw(){
     ctx.fillStyle = "#000000";
     ctx.fillText(score, 50, 100);
     ctx.fillText((timePassed)/1000, 50, c.height-50);
-
+    ctx.fillText(highscore, c.width/2, 100);
+    ctx.fillText((highTime)/1000, c.width/2, c.height-50);
     loops++;
 
 }
