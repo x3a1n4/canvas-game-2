@@ -4,9 +4,10 @@ var ctx = c.getContext("2d");
 var score=0;
 var time=0;
 var timePassed=0;
-var loops=0;
+var loops=1;
 var startTime = new Date().getTime();
-
+var newEnemyTime = 50;
+var difficulty = 0;
 var keys=[0,0,0,0];
 
 var enemies=[];
@@ -48,6 +49,12 @@ function keyUp(e){
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
+//stolen code hehehe
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 var player = {
     x: window.innerWidth/2,
@@ -58,7 +65,7 @@ var player = {
     lineColour: "#000000",
     lineWidth: 2,
     size: 20,
-    speed: 5,
+    speed: 2,
     drawPlayer: function(){
         ctx.fillStyle=this.colour;
         ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
@@ -99,8 +106,8 @@ var coin = {
         ctx.stroke();
     },
     randomisePosition(){
-        this.x = getRandomArbitrary(0, c.width);
-        this.y = getRandomArbitrary(0, c.height);
+        this.x = getRandomArbitrary(100, c.width-100);
+        this.y = getRandomArbitrary(100, c.height-100);
     }
 }
 
@@ -113,6 +120,7 @@ function Enemy() {
     this.lineColour = "#000000";
     this.lineWidth = 2;
     this.radius = 10;
+    this.direction = 0;
     this.drawEnemy= function(){
         
         ctx.fillStyle=this.colour;
@@ -187,26 +195,92 @@ function draw(){
         coin.randomisePosition();
         score++;
     }
+    var closest = 1000;
 
+    
     for(var i = 0; i<enemies.length; i++){
-        enemies[i].x += enemies[i].speed;
+
+        //move enemies
+        switch(enemies[i].direction){
+            case 0:
+                enemies[i].x += enemies[i].speed;
+                break;
+            case 1:
+                enemies[i].x -= enemies[i].speed;
+                break;
+            case 2:
+                enemies[i].y += enemies[i].speed;
+                break;
+            case 3:
+                enemies[i].y -= enemies[i].speed;
+                break;
+            default:
+                break;
+        }
+        
         enemies[i].drawEnemy();
-        if(distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y) < player.size/2 + Enemy.radius+10){
+        
+        if(distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y)<closest){
+            closest=distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y);
+        }
+        if(distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y) < player.size/2 + enemies[i].radius){
             startTime = new Date().getTime();
             player.x = player.startx;
             player.y = player.starty;
             coin.x = coin.startx;
             coin.y = coin.starty;
             enemies = [];
+            score = 0;
+            difficulty = 0;
+            newEnemyTime=50;
+            keys=[0,0,0,0];
             break;
         }
+
+        //checks if enemies are beyond the boundries
+        if(enemies[i].x>c.width+100||enemies[i].x<-100||enemies[i].y>c.height+100||enemies[i.y<-100]){
+            enemies.splice(i, 1);
+        }
     }
-    
-    if(loops % 50 == 0){
+
+    if(loops % newEnemyTime == 0){
         var newEnemy = new Enemy();
-        newEnemy.y = getRandomArbitrary(0, c.height);
+        var newDirection = getRandomInt(0, difficulty);
+        console.log(newDirection);
+        switch(newDirection){
+            case 0:
+                newEnemy.y = getRandomArbitrary(0, c.height);
+                newEnemy.x = 0;
+                break;
+            case 1:
+                newEnemy.y = getRandomArbitrary(0, c.height);
+                newEnemy.x = c.width;
+                console.log(1);
+                break;
+            case 2:
+                newEnemy.x = getRandomArbitrary(0, c.width);
+                newEnemy.y = 0;
+                break;
+            case 3:
+                newEnemy.x = getRandomArbitrary(0, c.width);
+                newEnemy.y = c.height;
+                break;
+            default:
+                break;
+        }
+        newEnemy.direction = newDirection;
         newEnemy.speed = getRandomArbitrary(timePassed/100000+1, timePassed/100000 + 1.5);
         enemies.push(newEnemy);
+    }
+    if(loops % 500 == 0){
+        if(newEnemyTime>5){
+            newEnemyTime--;
+        }
+    }
+    if(loops % 4000 == 0){
+        if(difficulty<3){
+            difficulty++;
+        }
     }
 
     ctx.font = "50px Arial";
@@ -215,6 +289,7 @@ function draw(){
     ctx.fillText((timePassed)/1000, 50, c.height-50);
 
     loops++;
+
 }
 
 
