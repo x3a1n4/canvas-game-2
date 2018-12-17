@@ -13,37 +13,52 @@ var highscore = 0;
 var highTime = 0;
 
 var enemies=[];
-document.onkeypress = keyPressed;
+
+document.onkeydown = keyDown;
 document.onkeyup = keyUp;
-function keyPressed(e){
+
+function keyDown(e){
     switch(e.keyCode) {
-        case 119:
+        case 38: //up
+        case 87:
             keys[0]=1;
             break;
-        case 97:
+        case 37: //left
+        case 65:
             keys[1]=1;
             break;
-        case 115:
+        case 40: //down
+        case 83:
             keys[2]=1;
             break;
-        case 100:
+        case 39: //right
+        case 68:
             keys[3]=1;
+            break;
+        default:
             break;
     }
 }
+
 function keyUp(e){
     switch(e.keyCode) {
         case 87:
+        case 38:
             keys[0]=0;
             break;
         case 65:
+        case 37:
             keys[1]=0;
             break;
         case 83:
+        case 40:
             keys[2]=0;
             break;
         case 68:
+        case 39:
             keys[3]=0;
+            break;
+        default:
             break;
     }
 }
