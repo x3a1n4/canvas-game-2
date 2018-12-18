@@ -11,6 +11,7 @@ var difficulty = 0;
 var keys=[0,0,0,0];
 var highscore = 0;
 var highTime = 0;
+var speedTime = 0;
 
 var enemies=[];
 
@@ -137,8 +138,11 @@ function Enemy() {
     this.lineColour = "#000000";
     this.lineWidth = 2;
     this.radius = 10;
-    this.direction = 0;
+    //for homing enemies
+    this.directionx = 0;
+    this.directiony = 0;
     this.time = 0;
+
     this.drawEnemy= function(){
         
         ctx.fillStyle=this.colour;
@@ -186,6 +190,7 @@ function draw(){
     c.width = window.innerWidth;
     c.height = window.innerHeight;
 
+    speedTime++;
     timePassed = new Date().getTime()-startTime;
 
     player.x += (keys[3]-keys[1]) * player.speed;
@@ -233,20 +238,28 @@ function draw(){
                 enemies[i].y -= enemies[i].speed;
                 break;
             case 4:
-                var xToPlayer = enemies[i].x - player.x;
-                var yToPlayer = enemies[i].y - player.y;
-                var divisor = 1 / distanceBetween(enemies[i].x, enemies[i].y, player.x, player.y);
-                enemies[i].x -= xToPlayer * divisor;
-                enemies[i].y -= yToPlayer * divisor;
-                enemies[i].time ++;
-                if(enemies[i].time > 3000){
-                    enemies.splice(i, 1);
+                if(enemies[i].time > 1000){
+                    enemies[i].x -= enemies[i].directionx;
+                    enemies[i].y -= enemies[i].directiony;
+                }else{
+                    var xToPlayer = enemies[i].x - player.x;
+                    var yToPlayer = enemies[i].y - player.y;
+                    var divisor = 1 / distanceBetween(enemies[i].x, enemies[i].y, player.x, player.y);
+
+                    enemies[i].directionx = xToPlayer * divisor;
+                    enemies[i].directiony = yToPlayer * divisor;
+                    enemies[i].x -= enemies[i].directionx;
+                    enemies[i].y -= enemies[i].directiony;
+
+                    enemies[i].time ++;
                 }
+                
+                
                 break;
             default:
                 break;
         }
-        
+
         enemies[i].drawEnemy();
         
         if(distanceBetween(player.x, player.y, enemies[i].x, enemies[i].y)<closest){
@@ -267,6 +280,7 @@ function draw(){
             enemies = [];
             score = 0;
             difficulty = 0;
+            speedTime = 0;
             newEnemyTime=50;
             keys=[0,0,0,0];
             break;
@@ -323,11 +337,11 @@ function draw(){
                 break;
         }
         newEnemy.direction = newDirection;
-        newEnemy.speed = getRandomArbitrary(timePassed/100000+1, timePassed/100000 + 1.5);
+        newEnemy.speed = getRandomArbitrary(speedTime/5000+1, speedTime/5000 + 1.5);
         enemies.push(newEnemy);
     }
 
-    if(loops % 500 == 0){
+    if(loops % 600 == 0){
         if(newEnemyTime>5){
             newEnemyTime--;
         }
@@ -336,17 +350,18 @@ function draw(){
     if(loops % 4000 == 0){
         if(difficulty<4){
             difficulty++;
+            speedTime = 0;
         }
     }
 
-    ctx.font = "50px Arial";
+    ctx.font = "bold 50px Courier";
     ctx.fillStyle = "#000000";
     ctx.fillText(score, 50, 100);
-    ctx.fillText((timePassed)/1000, 50, c.height-50);
+    ctx.fillText(((timePassed)/1000).toFixed(3), 50, c.height-50);
     ctx.fillText(highscore, c.width/2, 100);
-    ctx.fillText((highTime)/1000, c.width/2, c.height-50);
-    loops++;
+    ctx.fillText(((highTime)/1000).toFixed(3), c.width/2, c.height-50);
 
+    loops++;
 }
 
 
