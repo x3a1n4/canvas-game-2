@@ -5,3 +5,6 @@ It's an html file.
 Double click it
 
 Please tell me what to do on these I need help.
+Ummmm
+You can change the background.jpeg file to whatever you want for a custom background?
+I really don't know what to write here!
