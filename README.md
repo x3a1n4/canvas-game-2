@@ -1,10 +1,15 @@
 # canvas-game
 A simple game I'm making in canvas.
-Ok, this is my first time using github, so I have no clue how readmes work. 
-It's an html file.
-Double click it
 
-Please tell me what to do on these I need help.
-Ummmm
-You can change the background.jpeg file to whatever you want for a custom background?
-I really don't know what to write here!
+Hopefully a worlds hardest game clone.
+
+The level layouts are in levels.js.
+A "0" is a blank space
+A "1" is a wall
+A "2" is a checkpoint
+A "3" is a coin
+A "4" is where you want the player to spawn in a checkpoint (They also act as checkpoints)
+A "5" is where the player starts the level (They also act as "4"s)
+A "6" is where the player ends the level (They also act as "4"s)
+Only have one 5 and 6 per level
+Each array in the list is a level
