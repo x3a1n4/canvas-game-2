@@ -86,25 +86,57 @@ function distanceBetween(x1,y1,x2,y2){
 
 
 //Real code starts here now
+
 var level = 0;
 var blockSize = 40;
 var blockColor = "#00bfff";
 var checkpointColor = "#66ff66";
 var shadeColor = "#cccccc";
 var coinColor = "#FFFF00";
-//all walls
-var walls = [];
 
-//all checkpoints
-var checkpoints = [];
+//add walls to all the levels
+for(var i=0; i<levels.length; i++){
+    //the top and bottom of each level should all be walls
+    var startOnes=[];
+    var endOnes=[];
 
-//all checkpoint spawns
-var spawns = [];
+    var firstLine = levels[i][0];
+    var lastLine = levels[i][levels[i].length-1];
+
+    var startLength = firstLine.length;
+    var endLength = lastLine.length;
+
+    console.log(i);
+
+    for(var j=0; j<startLength; j++){
+        console.log("in here");
+        startOnes.push(1);
+    }
+
+    for(var j=0; j<endLength; j++){
+        console.log("in here too");
+        endOnes.push(1);
+    }
+
+        //add them to the current level
+    levels[i].unshift(startOnes);
+    levels[i].push(endOnes);
+
+        //now do the side walls
+    for(var j=0; j<levels[i].length; j++){
+        console.log("in here more");
+        levels[i][j].unshift(1);
+        levels[i][j].push(1);
+    }
+        
+}
+
+
 
 var Player={
     x:0,
     y:0,
-    speed: 0.15 * blockSize,
+    speed: 0.05 * blockSize,
     spawnX: 0,
     spawnY: 0,
     dead: true,
@@ -117,13 +149,47 @@ var Player={
         ctx.strokeRect(this.x, this.y, blockSize, blockSize);
     },
     movePlayer:function(){
+        //move player
         this.x += (keys[3] - keys[1]) * this.speed;
         this.y += (keys[2] - keys[0]) * this.speed;
 
-        var blockX = x/blockSize;
-        var blockY = y/blockSize;
-        //make collition
-        if(Math.round(x/blockSize))
+        var floorBlockX = Math.floor(this.x/blockSize);
+        var floorBlockY = Math.floor(this.y/blockSize);
+        var ceilBlockX = Math.ceil(this.x/blockSize);
+        var ceilBlockY = Math.ceil(this.y/blockSize);
+
+        //top left, top right, bottom right, bottom left
+        var corners = [
+            levels[level][floorBlockY][floorBlockX] == 1,
+            levels[level][floorBlockY][ceilBlockX] == 1,
+            levels[level][ceilBlockY][ceilBlockX] == 1,
+            levels[level][ceilBlockY][floorBlockX] == 1
+        ];
+
+        //weather the top, right, bottom or left sides of player are in a wall
+        var sides = [
+            corners[0] || corners[1],
+            corners[1] || corners[2],
+            corners[2] || corners[3],
+            corners[3] || corners[0]
+        ];
+        
+        if(sides[0]){
+            this.y += this.speed;
+        }
+        if(sides[1]){
+            this.x -= this.speed;
+        }
+        if(sides[2]){
+            this.y -= this.speed;
+        }
+        if(sides[3]){
+            this.x += this.speed;
+        }
+
+        console.log(corners);
+        //console.log(levels[level][blockY][blockX]);
+        //make collision
     }
 }
 
@@ -163,8 +229,6 @@ function draw(){
                 case 1:
                     ctx.fillStyle = blockColor;
                     ctx.fillRect(x*blockSize, y*blockSize, blockSize, blockSize);
-
-                    walls.push([x,y]);
                     break;
 
                 case 2:
