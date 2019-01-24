@@ -106,15 +106,12 @@ for(var i=0; i<levels.length; i++){
     var startLength = firstLine.length;
     var endLength = lastLine.length;
 
-    console.log(i);
 
     for(var j=0; j<startLength; j++){
-        console.log("in here");
         startOnes.push(1);
     }
 
     for(var j=0; j<endLength; j++){
-        console.log("in here too");
         endOnes.push(1);
     }
 
@@ -124,7 +121,6 @@ for(var i=0; i<levels.length; i++){
 
         //now do the side walls
     for(var j=0; j<levels[i].length; j++){
-        console.log("in here more");
         levels[i][j].unshift(1);
         levels[i][j].push(1);
     }
@@ -137,59 +133,79 @@ var Player={
     x:0,
     y:0,
     speed: 0.05 * blockSize,
+    size: 0.7 * blockSize,
     spawnX: 0,
     spawnY: 0,
     dead: true,
     color:"#FF0000",
-    lineWidth:20,
+    lineWidth: 3,
     drawPlayer:function(){
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, blockSize, blockSize);
-        ctx.strokeWidth = this.lineWidth;
-        ctx.strokeRect(this.x, this.y, blockSize, blockSize);
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.lineWidth = this.lineWidth;
+        ctx.strokeRect(this.x, this.y, this.size, this.size);
     },
     movePlayer:function(){
         //move player
         this.x += (keys[3] - keys[1]) * this.speed;
         this.y += (keys[2] - keys[0]) * this.speed;
 
-        var floorBlockX = Math.floor(this.x/blockSize);
-        var floorBlockY = Math.floor(this.y/blockSize);
-        var ceilBlockX = Math.ceil(this.x/blockSize);
-        var ceilBlockY = Math.ceil(this.y/blockSize);
+        //now do collision
 
-        //top left, top right, bottom right, bottom left
-        var corners = [
-            levels[level][floorBlockY][floorBlockX] == 1,
-            levels[level][floorBlockY][ceilBlockX] == 1,
-            levels[level][ceilBlockY][ceilBlockX] == 1,
-            levels[level][ceilBlockY][floorBlockX] == 1
-        ];
+        var corners=[
+            [Math.floor(this.y / blockSize), Math.floor(this.x / blockSize)],
+            [Math.floor(this.y / blockSize), Math.floor((this.x + this.size) / blockSize)],
+            [Math.floor((this.y + this.size) / blockSize), Math.floor((this.x + this.size) / blockSize)],
+            [Math.floor((this.y + this.size) / blockSize), Math.floor(this.x / blockSize)]
+        ]
+        //weather the corners are in walls, in the order top left, top right, bottom right, bottom left
+        var l=levels[level];
 
-        //weather the top, right, bottom or left sides of player are in a wall
-        var sides = [
-            corners[0] || corners[1],
-            corners[1] || corners[2],
-            corners[2] || corners[3],
-            corners[3] || corners[0]
-        ];
+        //also happy fun speghetti
+        var blockCorners=[
+            l[corners[0][0]] [corners[0][1]],
+            l[corners[1][0]] [corners[1][1]],
+            l[corners[2][0]] [corners[2][1]],
+            l[corners[3][0]] [corners[3][1]]
+        ]
+
+        var cornersInwalls=[
+            blockCorners[0] == 1,
+            blockCorners[1] == 1,
+            blockCorners[2] == 1,
+            blockCorners[3] == 1
+        ]
+
+        console.log(corners[0].toString() + " " + corners[1].toString() + " " + corners[2].toString() + " " + corners[3].toString());
+
+        //if a corner is in a block
+        //figure out which block it's in
+        //but it could be in both
         
-        if(sides[0]){
-            this.y += this.speed;
-        }
-        if(sides[1]){
-            this.x -= this.speed;
-        }
-        if(sides[2]){
-            this.y -= this.speed;
-        }
-        if(sides[3]){
-            this.x += this.speed;
-        }
+        //so it should test the options
+        //i'm gonna use the top left corner as an example
+        //it's in a left or top block
+        //head right
+        //if still in a block, go back and head down
+        //if still in a block, do both
+        
+        //TODO: finish this
+        //this is where collision will go
+        for(var i=0; i<cornersInwalls.length; i++){
+            if(cornersInwalls[i]){
+                switch(i){
+                    case 0:
+                        if(corners[i]){
 
-        console.log(corners);
-        //console.log(levels[level][blockY][blockX]);
-        //make collision
+                        }
+                    case 1:
+                    case 2:
+                    case 3:
+                    default:
+                        break;
+                }
+            }
+        }
     }
 }
 
@@ -201,7 +217,8 @@ function draw(){
 
     ctx.fillStyle = blockColor;
     ctx.fillRect(0, 0, c.width, c.height);
-    ctx.stroke();
+
+    
 
 
     for(var y=0; y<levels[level].length; y++){
