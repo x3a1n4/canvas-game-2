@@ -170,32 +170,64 @@ var Player={
             return(output);
         }
 
-        //this is all collision
-        //these corners are in blockspace, in y, x
-        var blockCorners=toBlockSpace(corners);
-        
-
-        console.log(blockCorners);
-        /*
-        
-        var l=levels[level];
-
-        //whether the corners are in walls, in the order top left, top right, bottom right, bottom left
-        var cornersInWalls=[
-            l[blockCorners[0][0]] [blockCorners[0][1]] == 1,
-            l[blockCorners[1][0]] [blockCorners[1][1]] == 1,
-            l[blockCorners[2][0]] [blockCorners[2][1]] == 1,
-            l[blockCorners[3][0]] [blockCorners[3][1]] == 1
-        ]
+        function isInWalls(list){
+            var l=levels[level];
+            var output=[];
+            list.forEach(function(point){
+                output.push(levels[level][point[0]][point[1]] == 1);
+            });
+            return output;
+        }
 
         //now for spots along the edge a pixel away from each corner
         var tangentPoints=[
+            [corners[0][0] + 2, corners[0][1]], //top left
+            [corners[0][0], corners[0][1] + 2],
 
+            [corners[1][0] + 2, corners[1][1]], //top right
+            [corners[1][0], corners[1][1] - 2],
+
+            [corners[2][0] - 2, corners[2][1]], //bottom right
+            [corners[2][0], corners[2][1] - 2],
+
+            [corners[3][0] - 2, corners[3][1]], //bottom left
+            [corners[3][0], corners[3][1] + 2]
         ]
 
+        var tangentPointsInWalls=isInWalls(toBlockSpace(tangentPoints));
+        var cornersInWalls=isInWalls(toBlockSpace(corners));
 
-        console.log(corners[0].toString() + " " + corners[1].toString() + " " + corners[2].toString() + " " + corners[3].toString());
-        */
+        //weather each side is in a wall, in order top, right, bottom, left
+        var sidesInWalls=[
+            tangentPointsInWalls[1] || tangentPointsInWalls[3],
+            tangentPointsInWalls[2] || tangentPointsInWalls[4],
+            tangentPointsInWalls[5] || tangentPointsInWalls[7],
+            tangentPointsInWalls[0] || tangentPointsInWalls[6]
+        ]
+
+        for(var i=0; i<sidesInWalls.length; i++){
+            if(sidesInWalls[i]){
+                switch(i){
+                    case 0:
+                        this.y += this.speed;
+                        break;
+                    case 1:
+                        this.x -= this.speed;
+                        break;
+                    case 2:
+                        this.y -= this.speed;
+                        break;
+                    case 3:
+                        this.x += this.speed;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        console.log(sidesInWalls);
+        
         //if a corner is in a block
         //figure out which block it's in
         //but it could be in both
