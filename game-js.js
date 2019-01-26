@@ -150,62 +150,57 @@ var Player={
         this.x += (keys[3] - keys[1]) * this.speed;
         this.y += (keys[2] - keys[0]) * this.speed;
 
-        //now do collision
-
-        var corners=[
-            [Math.floor(this.y / blockSize), Math.floor(this.x / blockSize)],
-            [Math.floor(this.y / blockSize), Math.floor((this.x + this.size) / blockSize)],
-            [Math.floor((this.y + this.size) / blockSize), Math.floor((this.x + this.size) / blockSize)],
-            [Math.floor((this.y + this.size) / blockSize), Math.floor(this.x / blockSize)]
+        var corners = [
+            [this.y, this.x],
+            [this.y, this.x + this.size],
+            [this.y + this.size, this.x + this.size],
+            [this.y + this.size, this.x]
         ]
-        //weather the corners are in walls, in the order top left, top right, bottom right, bottom left
+
+        //turns a list to blockspace
+        function toBlockSpace(list){
+            var output=[];
+            list.forEach(function(corner) {
+                var blockCorner = [];
+                corner.forEach(function(value) {
+                    blockCorner.push(Math.floor(value/blockSize));
+                });
+                output.push(blockCorner);
+            });
+            return(output);
+        }
+
+        //this is all collision
+        //these corners are in blockspace, in y, x
+        var blockCorners=toBlockSpace(corners);
+        
+
+        console.log(blockCorners);
+        /*
+        
         var l=levels[level];
 
-        //also happy fun speghetti
-        var blockCorners=[
-            l[corners[0][0]] [corners[0][1]],
-            l[corners[1][0]] [corners[1][1]],
-            l[corners[2][0]] [corners[2][1]],
-            l[corners[3][0]] [corners[3][1]]
+        //whether the corners are in walls, in the order top left, top right, bottom right, bottom left
+        var cornersInWalls=[
+            l[blockCorners[0][0]] [blockCorners[0][1]] == 1,
+            l[blockCorners[1][0]] [blockCorners[1][1]] == 1,
+            l[blockCorners[2][0]] [blockCorners[2][1]] == 1,
+            l[blockCorners[3][0]] [blockCorners[3][1]] == 1
         ]
 
-        var cornersInwalls=[
-            blockCorners[0] == 1,
-            blockCorners[1] == 1,
-            blockCorners[2] == 1,
-            blockCorners[3] == 1
+        //now for spots along the edge a pixel away from each corner
+        var tangentPoints=[
+
         ]
+
 
         console.log(corners[0].toString() + " " + corners[1].toString() + " " + corners[2].toString() + " " + corners[3].toString());
-
+        */
         //if a corner is in a block
         //figure out which block it's in
         //but it could be in both
         
-        //so it should test the options
-        //i'm gonna use the top left corner as an example
-        //it's in a left or top block
-        //head right
-        //if still in a block, go back and head down
-        //if still in a block, do both
         
-        //TODO: finish this
-        //this is where collision will go
-        for(var i=0; i<cornersInwalls.length; i++){
-            if(cornersInwalls[i]){
-                switch(i){
-                    case 0:
-                        if(corners[i]){
-
-                        }
-                    case 1:
-                    case 2:
-                    case 3:
-                    default:
-                        break;
-                }
-            }
-        }
     }
 }
 
