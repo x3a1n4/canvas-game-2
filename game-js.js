@@ -87,12 +87,17 @@ function distanceBetween(x1,y1,x2,y2){
 
 //Real code starts here now
 
+//Collision doesn't work because the move speed is more than 2
 var level = 0;
-var blockSize = 40;
+var blockSize = 50;
 var blockColor = "#00bfff";
 var checkpointColor = "#66ff66";
 var shadeColor = "#cccccc";
 var coinColor = "#FFFF00";
+var onLoad = true;
+var blockLineWidth = 3;
+
+var walls = [];
 
 //add walls to all the levels
 for(var i=0; i<levels.length; i++){
@@ -134,16 +139,20 @@ var Player={
     y:0,
     speed: 0.05 * blockSize,
     size: 0.7 * blockSize,
+    offset: 1,
+    ajustedSize: 0,
     spawnX: 0,
     spawnY: 0,
     dead: true,
     color:"#FF0000",
     lineWidth: 3,
+    collectedCoins:[],
     drawPlayer:function(){
+        
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.fillRect(this.x - this.offset, this.y - this.offset, this.ajustedSize, this.ajustedSize);
         ctx.lineWidth = this.lineWidth;
-        ctx.strokeRect(this.x, this.y, this.size, this.size);
+        ctx.strokeRect(this.x - this.offset, this.y - this.offset, this.ajustedSize, this.ajustedSize);
     },
     movePlayer:function(){
         //move player
@@ -181,17 +190,17 @@ var Player={
 
         //now for spots along the edge a pixel away from each corner
         var tangentPoints=[
-            [corners[0][0] + 2, corners[0][1]], //top left
-            [corners[0][0], corners[0][1] + 2],
+            [corners[0][0] + this.speed, corners[0][1]], //top left
+            [corners[0][0], corners[0][1] + this.speed],
 
-            [corners[1][0] + 2, corners[1][1]], //top right
-            [corners[1][0], corners[1][1] - 2],
+            [corners[1][0] + this.speed, corners[1][1]], //top right
+            [corners[1][0], corners[1][1] - this.speed],
 
-            [corners[2][0] - 2, corners[2][1]], //bottom right
-            [corners[2][0], corners[2][1] - 2],
+            [corners[2][0] - this.speed, corners[2][1]], //bottom right
+            [corners[2][0], corners[2][1] - this.speed],
 
-            [corners[3][0] - 2, corners[3][1]], //bottom left
-            [corners[3][0], corners[3][1] + 2]
+            [corners[3][0] - this.speed, corners[3][1]], //bottom left
+            [corners[3][0], corners[3][1] + this.speed]
         ]
 
         var tangentPointsInWalls=isInWalls(toBlockSpace(tangentPoints));
@@ -226,12 +235,13 @@ var Player={
             }
         }
 
-        console.log(sidesInWalls);
-        
-        //if a corner is in a block
-        //figure out which block it's in
-        //but it could be in both
-        
+
+        //now check if it's touching a coin
+        toBlockSpace(corners).forEach(function(corner){
+            if(levels[level][corner[0]][corner[1]] == 3){
+                levels[level][corner[0]][corner[1]] = 33;
+            }
+        });
         
     }
 }
@@ -245,15 +255,74 @@ function draw(){
     ctx.fillStyle = blockColor;
     ctx.fillRect(0, 0, c.width, c.height);
 
-    
-
+    //change the player ajusted size for spawning in checkpoints
+    Player.ajustedSize = Player.size + Player.offset;
 
     for(var y=0; y<levels[level].length; y++){
         for(var x=0; x<levels[level][y].length; x++){
             var currentBlock = levels[level][y][x];
             switch(currentBlock){
+                
+
+                case 1:
+                    ctx.fillStyle = blockColor;
+                    ctx.fillRect(x*blockSize, y*blockSize, blockSize, blockSize);
+
+                    if(onLoad){
+                        walls.push([x, y].toString());
+                    }
+
+                    if(!onLoad){
+                        ctx.fillStyle = "#000000";
+
+                        //draw the inside walls
+                        if(walls.indexOf([x, y - 1].toString()) == -1){
+                            ctx.fillRect(x*blockSize, y*blockSize, blockSize, blockLineWidth);
+                            //top line
+                        }
+
+                        if(walls.indexOf([x + 1, y].toString()) == -1){
+                            ctx.fillRect((x+1)*blockSize - blockLineWidth, y*blockSize, blockLineWidth, blockSize);
+                            //right line
+                        }
+
+                        if(walls.indexOf([x, y + 1].toString()) == -1){
+                            ctx.fillRect(x*blockSize, (y+1)*blockSize - blockLineWidth, blockSize, blockLineWidth);
+                            //bottom line
+                        }
+
+                        if(walls.indexOf([x - 1, y].toString()) == -1){
+                            ctx.fillRect(x*blockSize, y*blockSize, blockLineWidth, blockSize);
+                            //left line
+                        }
+
+
+                        //now draw the inside corners
+                        if(walls.indexOf([x - 1, y - 1].toString()) == -1){
+                            ctx.fillRect(x*blockSize, y*blockSize, blockLineWidth, blockLineWidth);
+                            //top left corner
+                        }
+
+                        if(walls.indexOf([x + 1, y - 1].toString()) == -1){
+                            ctx.fillRect((x + 1)*blockSize - blockLineWidth, y*blockSize, blockLineWidth, blockLineWidth);
+                            //top right corner
+                        }
+
+                        if(walls.indexOf([x + 1, y + 1].toString()) == -1){
+                            ctx.fillRect((x + 1)*blockSize - blockLineWidth, (y + 1)*blockSize - blockLineWidth, blockLineWidth, blockLineWidth);
+                            //bottom right corner
+                        }
+
+                        if(walls.indexOf([x - 1, y + 1].toString()) == -1){
+                            ctx.fillRect(x*blockSize, (y + 1)*blockSize  - blockLineWidth, blockLineWidth, blockLineWidth);
+                            //bottom left corner
+                        }
+                    }
+
+                    break;
                 case 0:
                 case 3:
+                case 33:
                     if((x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0)){
                         ctx.fillStyle = "#FFFFFF";
                     }else{
@@ -270,11 +339,6 @@ function draw(){
                     }
                     break;
 
-                case 1:
-                    ctx.fillStyle = blockColor;
-                    ctx.fillRect(x*blockSize, y*blockSize, blockSize, blockSize);
-                    break;
-
                 case 2:
                 case 4:
                 case 5:
@@ -288,8 +352,9 @@ function draw(){
                         case 6:
                     }
                     if(currentBlock == 5){
-                        Player.spawnX = x*blockSize;
-                        Player.spawnY = y*blockSize;
+                        var offset = (blockSize - Player.ajustedSize) / 2
+                        Player.spawnX = x*blockSize + offset;
+                        Player.spawnY = y*blockSize + offset;
                     }
                     break;
                 default:
@@ -307,6 +372,9 @@ function draw(){
 
     Player.movePlayer();
     Player.drawPlayer();
+    
+
+    onLoad=false;
 }
 
 

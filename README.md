@@ -13,3 +13,5 @@ A "5" is where the player starts the level (They also act as "4"s)
 A "6" is where the player ends the level (They also act as "4"s)
 Only have one 5 and 6 per level
 Each array in the list is a level
+
+Numbers are changed to 33 if a coin is collected but the player hasn't touched a checkpoint yet.
