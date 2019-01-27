@@ -90,6 +90,7 @@ function distanceBetween(x1,y1,x2,y2){
 //Collision doesn't work because the move speed is more than 2
 var level = 0;
 var blockSize = 50;
+var coinSize = blockSize / 4;
 var blockColor = "#00bfff";
 var checkpointColor = "#66ff66";
 var shadeColor = "#cccccc";
@@ -132,6 +133,13 @@ for(var i=0; i<levels.length; i++){
         
 }
 
+//change coins to actual space
+for(var i = 0; i<coins.length; i++){
+    for(var j = 0; j<coins[i].length; j++){
+        var coin = coins[i][j];
+        coins[i][j] = [coin[0] * blockSize + blockSize/2, coin[1] * blockSize + blockSize/2];
+    }
+}
 
 
 var Player={
@@ -235,14 +243,13 @@ var Player={
             }
         }
 
-
-        //now check if it's touching a coin
-        toBlockSpace(corners).forEach(function(corner){
-            if(levels[level][corner[0]][corner[1]] == 3){
-                levels[level][corner[0]][corner[1]] = 33;
+        //collect coins
+        for(var i = 0; i<coins[level].length; i++){
+            var coin = coins[level][i];
+            if(distanceBetween(this.x + this.size/2, this.y + this.size/2, coin[1], coin[0]) < this.size/2 + coinSize + blockSize / 10){
+                this.collectedCoins.push(coins[level].splice(i, 1));
             }
-        });
-        
+        }
     }
 }
 
@@ -321,22 +328,12 @@ function draw(){
 
                     break;
                 case 0:
-                case 3:
-                case 33:
                     if((x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0)){
                         ctx.fillStyle = "#FFFFFF";
                     }else{
                         ctx.fillStyle = shadeColor;
                     }
                     ctx.fillRect(x*blockSize, y*blockSize, blockSize, blockSize);
-
-                    if(currentBlock == 3){
-                        ctx.fillStyle = coinColor;
-                        ctx.beginPath();
-                        ctx.arc(x*blockSize + blockSize/2, y*blockSize + blockSize/2, blockSize/2.5, 0, 2 * Math.PI);
-                        ctx.fill();
-                        ctx.stroke();
-                    }
                     break;
 
                 case 2:
@@ -362,6 +359,14 @@ function draw(){
             }
         }
     }
+
+    coins[level].forEach(function (coin){
+        ctx.fillStyle = coinColor;
+        ctx.beginPath();
+        ctx.arc(coin[1], coin[0], coinSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+    });
 
     if(Player.dead){
         Player.x = Player.spawnX;
