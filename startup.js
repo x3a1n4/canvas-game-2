@@ -97,6 +97,7 @@ var shadeColor = "#cccccc";
 var coinColor = "#FFFF00";
 var onLoad = true;
 var blockLineWidth = 3;
+var enemyColor = "#0000FF";
 
 var walls = [];
 

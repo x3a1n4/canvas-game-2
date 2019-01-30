@@ -123,6 +123,7 @@ function draw(){
     Player.movePlayer();
     Player.drawPlayer();
     
+    console.log([1, 2] == [1, 2]);
 
     onLoad=false;
 }
