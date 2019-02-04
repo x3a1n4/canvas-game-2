@@ -62,14 +62,15 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+//rotates point x, y around centerx, centery by ang
 var rotate2d = function(x, y , centerx, centery, ang)
 {
     ang = ang * (Math.PI/180);
     x-=centerx;
     y-=centery;
     return(
-        [x * Math.cos(ang) - y * Math.sin(ang),
-        x * Math.sin(ang) + y * Math.cos(ang)]
+        [(x * Math.cos(ang) - y * Math.sin(ang)) + centerx,
+        (x * Math.sin(ang) + y * Math.cos(ang)) + centery]
     )
 }
 
@@ -86,8 +87,6 @@ function distanceBetween(x1,y1,x2,y2){
 
 
 //Real code starts here now
-
-//Collision doesn't work because the move speed is more than 2
 var level = 0;
 var blockSize = 50;
 var coinSize = blockSize / 4;

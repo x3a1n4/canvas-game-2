@@ -113,6 +113,11 @@ function draw(){
         ctx.stroke();
     });
 
+    enemies[level].forEach(function (enemy){
+        enemy.moveEnemy();
+        enemy.drawEnemy();
+    });
+
     if(Player.dead){
         Player.x = Player.spawnX;
         Player.y = Player.spawnY;
@@ -122,8 +127,6 @@ function draw(){
 
     Player.movePlayer();
     Player.drawPlayer();
-    
-    console.log([1, 2] == [1, 2]);
 
     onLoad=false;
 }

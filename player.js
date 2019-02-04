@@ -99,6 +99,15 @@ var Player={
             }
         }
 
+        //check enemies
+        for(var i=0; i<enemies[level].length; i++){
+            var enemy = enemies[level][i];
+            if(distanceBetween(this.x + this.size/2, this.y + this.size/2, enemy.x, enemy.y) < this.size/2 + enemy.size){
+                this.x = this.spawnX;
+                this.y = this.spawnY;
+            }
+        }
+
         //collect coins
         for(var i = 0; i<coins[level].length; i++){
             var coin = coins[level][i];
