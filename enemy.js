@@ -34,6 +34,7 @@ function Enemy(movement){
             if(distanceBetween(this.x, this.y, nextElement.x, nextElement.y) <= this.speed){
                 this.x = nextElement.x;
                 this.y = nextElement.y;
+                this.speed = this.movement[this.id].speed;
                 
             }else{
                 //move to the rotate2d of this.speed, where the angle is the angle to the target
@@ -56,6 +57,7 @@ function Enemy(movement){
 
         if(this.x == nextElement.x && this.y == nextElement.y){
             this.id = nextId;
+            console.log("hi");
         }
     }
 }

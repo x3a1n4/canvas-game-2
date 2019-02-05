@@ -47,6 +47,31 @@ var enemies = [
             {y:7, x:17, speed: 1},
             {y:7, x:15, speed: 1},
             {y:9, x:15, speed: 1}
+        ]),
+        new Enemy([
+            {y:4, x:1, speed: 0.5},
+            {y:4, x:3, speed: 0.5},
+            {y:6, x:3, speed: 0.5},
+            {y:6, x:1, speed: 0.5},
+            {y:8, x:1, speed: 0.5},
+            {y:8, x:2, speed: 0.5},
+            {y:11, x:2, speed: 0.5},
+            {y:11, x:5, speed: 0.5},
+            {y:2, x:5, speed: 0.5},
+            {y:2, x:7, speed: 0.5},
+            {y:11, x:7, speed: 0.5},
+            {y:11, x:9, speed: 0.5},
+            {y:2, x:9, speed: 0.5},
+            {y:2, x:11, speed: 0.5},
+            {y:11, x:11, speed: 0.5},
+            {y:11, x:13, speed: 0.5},
+            {y:2, x:13, speed: 0.5},
+            {y:2, x:16, speed: 0.5},
+            {y:5, x:16, speed: 0.5},
+            {y:5, x:17, speed: 0.5},
+            {y:7, x:17, speed: 0.5},
+            {y:7, x:15, speed: 0.5},
+            {y:9, x:15, speed: 1000}
         ])
     ],
     [
