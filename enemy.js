@@ -50,14 +50,19 @@ function Enemy(movement){
                 
                 this.x += this.change[0];
                 this.y += this.change[1];
+
+                
             }
         }else{
 
         }
 
         if(this.x == nextElement.x && this.y == nextElement.y){
+            if(movement.length>20){console.log(this.id);}
+            
             this.id = nextId;
-            console.log("hi");
+            this.speed = this.movement[this.id].speed;
+            
         }
     }
 }

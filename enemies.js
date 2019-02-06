@@ -71,7 +71,8 @@ var enemies = [
             {y:5, x:17, speed: 0.5},
             {y:7, x:17, speed: 0.5},
             {y:7, x:15, speed: 0.5},
-            {y:9, x:15, speed: 1000}
+            {y:9, x:15, speed: 0.5},
+            {y:9, x:17, speed: 1000}
         ])
     ],
     [
