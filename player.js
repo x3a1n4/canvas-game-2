@@ -1,7 +1,7 @@
 var Player={
     x:0,
     y:0,
-    speed: 0.05 * blockSize,
+    speed: 0.07 * blockSize,
     size: 0.7 * blockSize,
     offset: 1,
     ajustedSize: 0,
