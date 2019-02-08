@@ -1,5 +1,8 @@
+
+//todo: change to requestanimationframe
 function draw(){
-    
+    const animation = requestAnimationFrame(draw);
+
     c.width = window.innerWidth;
     c.height = window.innerHeight;
 
@@ -131,6 +134,6 @@ function draw(){
     onLoad=false;
 }
 
+draw();
 
-
-window.setInterval(draw, 10);
+//window.setInterval(draw, 10);

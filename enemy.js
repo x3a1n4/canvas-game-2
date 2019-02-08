@@ -17,7 +17,12 @@ function Enemy(movement){
     this.speed = this.movement[this.id].speed;
     this.rotation = this.movement[this.id].rot;
 
+    
+
     this.change = [0, 0];
+
+    this.changes = [];
+    
     this.drawEnemy = function(){
         ctx.fillStyle = this.color;
         ctx.beginPath();
