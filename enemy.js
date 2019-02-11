@@ -17,12 +17,28 @@ function Enemy(movement){
     this.speed = this.movement[this.id].speed;
     this.rotation = this.movement[this.id].rot;
 
-    
-
     this.change = [0, 0];
 
+    /*
     this.changes = [];
-    
+
+    for(var i = 0; i < movement.length; i++){
+        if(this.movement[i].rot == undefined){
+            var distanceX = nextElement.x - this.x;
+                var distanceY = nextElement.y - this.y;
+
+                var hypotenuse = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+                this.speed = this.movement[this.id].speed;
+                var divisor = hypotenuse/this.speed;
+
+                this.changes.push([distanceX/divisor, distanceY/divisor]);
+        }else{
+            this.changes.push("todo");
+        }
+    }
+    console.log(this.changes);
+    */
     this.drawEnemy = function(){
         ctx.fillStyle = this.color;
         ctx.beginPath();
